@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
-     environment{
-        docker_hub_username= "yfhates"   
-     }
+    environment {
+        docker_hub_username = "yfhates"
+    }
 
     stages {
         stage("Cleaning Workspace") {
@@ -23,26 +23,27 @@ pipeline {
                 sh '''
                     export PATH=$PATH:/usr/local/go/bin
                     go build -o go-web-app
-                    '''
+                '''
             }
         }
 
         stage("Test") {
             steps {
                 sh '''
-                  export PATH=$PATH:/usr/local/go/bin
-                  go test ./...
-
-                  '''
+                    export PATH=$PATH:/usr/local/go/bin
+                    go test ./...
+                '''
             }
         }
 
-        stage("Docker image Build"){
-            steps{
+        stage("Docker image Build") {
+            steps {
                 sh 'sudo docker system prune -f'
                 sh 'sudo docker container prune -f'
-                // Define the image tag using Jenkins build number
-                  def imageTag = "${docker_hub_username}/go-web-app-new-image:${BUILD_NUMBER}" //check the image name
+                script {
+                    def imageTag = "${docker_hub_username}/go-web-app-new-image:${env.BUILD_NUMBER}"
+                    echo "Image tag: ${imageTag}"
+                }
             }
         }
     }
