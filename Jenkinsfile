@@ -55,10 +55,10 @@ pipeline {
                     sh "docker build -t ${imageTag} ."
 
                     withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
-                        sh '''
+                        sh """
                             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
                             docker push '"${imageTag}"'
-                        '''
+                        """
                     }
                 }
             }
