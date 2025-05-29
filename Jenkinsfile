@@ -1,23 +1,7 @@
 pipeline {
     agent any
 
-    environment {
-        GOROOT = '/usr/local/go'
-        PATH = "${GOROOT}/bin:${env.PATH}"
-    }
-
     stages {
-        stage("Install Go") {
-            steps {
-                sh '''
-                    wget https://golang.org/dl/go1.22.0.linux-amd64.tar.gz
-                    sudo rm -rf /usr/local/go
-                    sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
-                    go version
-                '''
-            }
-        }
-
         stage("Cleaning Workspace") {
             steps {
                 cleanWs()
