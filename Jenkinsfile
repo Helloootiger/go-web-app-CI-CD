@@ -64,5 +64,11 @@ pipeline {
                 }
             }
         }
+
+        stage("Update tag in helm chart"){
+            steps{
+                
+            }
+        }
     }
 }
