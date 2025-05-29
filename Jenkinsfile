@@ -74,7 +74,7 @@ pipeline {
                 }
 
                 steps{
-                    dir(){
+                    dir("helm/go-web-app-chart"){
                         withcredentials([usernamePassword(
                             credentialsId:'github-cred',
                         usernameVariable:'GITHUB_USER',
