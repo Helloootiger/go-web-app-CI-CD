@@ -38,8 +38,8 @@ pipeline {
 
         stage("Docker image Build") {
             steps {
-                sh 'sudo docker system prune -f'
-                sh 'sudo docker container prune -f'
+                sh ' docker system prune -f'
+                sh ' docker container prune -f'
                 script {
                     def imageTag = "${docker_hub_username}/go-web-app-new-image:${env.BUILD_NUMBER}"
                     echo "Image tag: ${imageTag}"
