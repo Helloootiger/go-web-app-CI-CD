@@ -3,8 +3,7 @@ pipeline {
 
     environment {
         docker_hub_username = "yfhates"
-        // Declare imageTag as environment variable for reuse
-        imageTag = ""
+        GO_PATH = "/usr/local/go/bin"
     }
 
     stages {
@@ -23,7 +22,7 @@ pipeline {
         stage("Build") {
             steps {
                 sh '''
-                    export PATH=$PATH:/usr/local/go/bin
+                    export PATH=$PATH:$GO_PATH
                     go build -o go-web-app
                 '''
             }
@@ -32,34 +31,36 @@ pipeline {
         stage("Test") {
             steps {
                 sh '''
-                    export PATH=$PATH:/usr/local/go/bin
+                    export PATH=$PATH:$GO_PATH
                     go test ./...
                 '''
             }
         }
 
-        stage("Docker image Build and Tag") {
+        stage("Docker Cleanup") {
             steps {
                 sh 'docker system prune -f'
                 sh 'docker container prune -f'
-                script {
-                    env.imageTag = "${docker_hub_username}/go-web-app-new-image:${env.BUILD_NUMBER}"
-                    echo "Image tag: ${env.imageTag}"
-                }
             }
         }
 
-        stage("Docker images push to DockerHub") {
+        stage("Docker Build and Push") {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-cred',
-                    usernameVariable: 'dockerHubUser',
-                    passwordVariable: 'dockerHubPass'
-                )]) {
-                    sh '''
-                        echo $dockerHubPass | docker login -u $dockerHubUser --password-stdin
-                        docker push ${imageTag}
-                    '''
+                script {
+                    // Compose dynamic image tag using env variables
+                    def imageTag = "${env.docker_hub_username}/go-web-app-new-image:${env.BUILD_NUMBER}"
+                    echo "Docker Image Tag: ${imageTag}"
+
+                    // Build Docker image
+                    sh "docker build -t ${imageTag} ."
+
+                    // Login and push with credentials
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+                        sh """
+                            echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
+                            docker push ${imageTag}
+                        """
+                    }
                 }
             }
         }
