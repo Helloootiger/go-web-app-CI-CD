@@ -83,7 +83,7 @@ pipeline {
 
                             git add values.yaml
                             git commit -m "Update Image tag in values.yaml to version ${BUILD_NUMBER}" || echo "No changes to commit"
-                            git push https://$GITHUB_USER:$GITHUB_PASS@github.com/$GITHUB_USER/go-web-app-devops.git HEAD:main
+                            git push https://$GITHUB_USER:$GITHUB_PASS@github.com/$GITHUB_USER/go-web-app-devops.git HEAD:helm-chart
                         '''
                     }
                 }
