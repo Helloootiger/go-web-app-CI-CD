@@ -25,7 +25,11 @@ pipeline {
 
         stage("Test") {
             steps {
-                sh 'go test ./...'
+                sh '''
+                  export PATH=$PATH:/usr/local/go/bin
+                  go test ./...
+
+                  '''
             }
         }
     }
