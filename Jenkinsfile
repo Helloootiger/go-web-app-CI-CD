@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         docker_hub_username = "yfhates"
+        // Declare imageTag as environment variable for reuse
+        imageTag = ""
     }
 
     stages {
@@ -36,22 +38,29 @@ pipeline {
             }
         }
 
-        stage("Docker image Build adn Tag") {
+        stage("Docker image Build and Tag") {
             steps {
-                sh ' docker system prune -f'
-                sh ' docker container prune -f'
+                sh 'docker system prune -f'
+                sh 'docker container prune -f'
                 script {
-                    def imageTag = "${docker_hub_username}/go-web-app-new-image:${env.BUILD_NUMBER}"
-                    echo "Image tag: ${imageTag}"
+                    env.imageTag = "${docker_hub_username}/go-web-app-new-image:${env.BUILD_NUMBER}"
+                    echo "Image tag: ${env.imageTag}"
                 }
             }
         }
-        stage("Docker images push to DockerHub "){
-            steps{
-                sh '''
-                echo ${docker_hub_password} | sudo docker login -u ${docker_hub_username} --password-stdin
-                docker push ${imageTag}"
-                '''
+
+        stage("Docker images push to DockerHub") {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-cred',
+                    usernameVariable: 'dockerHubUser',
+                    passwordVariable: 'dockerHubPass'
+                )]) {
+                    sh '''
+                        echo $dockerHubPass | docker login -u $dockerHubUser --password-stdin
+                        docker push ${imageTag}
+                    '''
+                }
             }
         }
     }
