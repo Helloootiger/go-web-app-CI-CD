@@ -55,7 +55,7 @@ pipeline {
                     sh "docker build -t ${imageTag} ."
 
                     // Login and push with credentials
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
                         sh """
                             echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
                             docker push ${imageTag}
