@@ -36,7 +36,7 @@ pipeline {
             }
         }
 
-        stage("Docker image Build") {
+        stage("Docker image Build adn Tag") {
             steps {
                 sh ' docker system prune -f'
                 sh ' docker container prune -f'
@@ -44,6 +44,14 @@ pipeline {
                     def imageTag = "${docker_hub_username}/go-web-app-new-image:${env.BUILD_NUMBER}"
                     echo "Image tag: ${imageTag}"
                 }
+            }
+        }
+        stage("Docker images push to DockerHub "){
+            steps{
+                sh '''
+                echo ${docker_hub_password} | sudo docker login -u ${docker_hub_username} --password-stdin
+                docker push ${imageTag}"
+                '''
             }
         }
     }
