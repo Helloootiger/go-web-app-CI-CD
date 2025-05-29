@@ -16,7 +16,10 @@ pipeline {
 
         stage("Build") {
             steps {
-                sh 'go build -o go-web-app'
+                sh '''
+                    export PATH=$PATH:/usr/local/go/bin
+                    go build -o go-web-app
+                    '''
             }
         }
 
