@@ -14,7 +14,7 @@ pipeline {
 
         stage("Git Checkout") {
             steps {
-                git credentialsId: 'git-cred', url: 'https://github.com/AmeyD090/go-web-app-devops.git', branch: 'main'
+                git credentialsId: 'github-cred', url: 'https://github.com/AmeyD090/go-web-app-devops.git', branch: 'main'
             }
         }
 
