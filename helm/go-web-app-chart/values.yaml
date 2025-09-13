@@ -8,7 +8,7 @@ image:
   repository: helloootiger/go-web-app
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "17692909451"
+  tag: "17693507313"
 
 ingress:
   enabled: false
